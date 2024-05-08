@@ -75,7 +75,12 @@ def handle_args():
 
     parser.add_argument(
         "--voice_name",
-        help="Various TTS providers has different voice names, look up for your provider settings.",
+        help="Narrator voice. Various TTS providers has different voice names, look up for your provider settings.",
+    )
+
+    parser.add_argument(
+        "--dialogue_voice_name",
+        help="Dialogue voice. Various TTS providers has different voice names, look up for your provider settings.",
     )
 
     parser.add_argument(

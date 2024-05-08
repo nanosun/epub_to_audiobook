@@ -4,41 +4,41 @@ from mutagen.id3._frames import TIT2, TPE1, TALB, TRCK
 from mutagen.id3 import ID3, ID3NoHeaderError
 
 logger = logging.getLogger(__name__)
+QUOTATIONS = ["\"", "“", "”", "„", "‟", "«", "»", "「", "」"]
 
-
-def split_text(text: str, max_chars: int, language: str) -> List[str]:
+def split_text(text: str, max_chars: int, language: str) -> list[dict]:
     chunks = []
     current_chunk = ""
-
-    if language.startswith("zh"):  # Chinese
-        for char in text:
-            if len(current_chunk) + 1 <= max_chars or is_special_char(char):
-                current_chunk += char
-            else:
-                chunks.append(current_chunk)
-                current_chunk = char
-
-        if current_chunk:
-            chunks.append(current_chunk)
-
-    else:
-        words = text.split()
-
-        for word in words:
-            if len(current_chunk) + len(word) + 1 <= max_chars:
-                current_chunk += (" " if current_chunk else "") + word
-            else:
-                chunks.append(current_chunk)
-                current_chunk = word
-
-        if current_chunk:
-            chunks.append(current_chunk)
+    endTag = "narration"
+    for index, char in enumerate(text):
+        current_chunk += char
+        if char in QUOTATIONS and endTag == "narration":
+            endTag = "dialogue"
+            chunks.append({'text': current_chunk[:-1], 'tag': 'narration'})
+            current_chunk = ""
+        elif char in QUOTATIONS and endTag == "dialogue":
+            endTag = "narration"
+            if len(current_chunk) >= 6:  # only treat as dialogues if they are longer than 6 chars
+                chunks.append({'text': current_chunk[:-1], 'tag': 'dialogue'})
+                current_chunk = ""
+            else: # handle small quotations as part of narration
+                if chunks[-1]['tag'] == 'narration':    # if last chunk was a dialogue, merge with this one
+                    current_chunk = chunks.pop()["text"] + current_chunk
+                else:   # if last chunk was a dialogue, treat this one as narration
+                    continue                
+        elif len(current_chunk) + 1 <= max_chars or is_special_char(char):
+            continue
+        elif len(current_chunk) + 1 > max_chars:
+            chunks.append({'text': current_chunk, 'tag': endTag})
+            current_chunk = ""
+        elif index == len(text) - 1:
+            chunks.append({'text': current_chunk, 'tag': endTag})
 
     logger.info(f"Split text into {len(chunks)} chunks")
     for i, chunk in enumerate(chunks, 1):
-        first_100 = chunk[:100]
-        last_100 = chunk[-100:] if len(chunk) > 100 else ""
-        logger.info(
+        first_100 = chunk['text'][:100]
+        last_100 = chunk['text'][-100:] if len(chunk['text']) > 100 else ""
+        logger.debug(
             f"Chunk {i}: Length={len(chunk)}, Start={first_100}..., End={last_100}"
         )
 

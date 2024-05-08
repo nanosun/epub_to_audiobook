@@ -18,6 +18,7 @@ class GeneralConfig:
         self.tts = args.tts
         self.language = args.language
         self.voice_name = args.voice_name
+        self.dialogue_voice_name = args.dialogue_voice_name
         self.output_format = args.output_format
         self.model_name = args.model_name
 

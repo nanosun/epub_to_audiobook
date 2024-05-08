@@ -22,6 +22,7 @@ class AzureTTSProvider(BaseTTSProvider):
         logger.setLevel(config.log)
         # TTS provider specific config
         config.voice_name = config.voice_name or "en-US-GuyNeural"
+        config.dialogue_voice_name = config.dialogue_voice_name or "en-US-AriaNeural"
         config.output_format = config.output_format or "audio-24khz-48kbitrate-mono-mp3"
 
         # 16$ per 1 million characters
@@ -98,9 +99,9 @@ class AzureTTSProvider(BaseTTSProvider):
 
         for i, chunk in enumerate(text_chunks, 1):
             logger.debug(
-                f"Processing chunk {i} of {len(text_chunks)}, length={len(chunk)}, text=[{chunk}]"
+                f"Processing chunk {i} of {len(text_chunks)}, length={len(chunk['text'])}, text=[{chunk['text']}]"
             )
-            escaped_text = html.escape(chunk)
+            escaped_text = html.escape(chunk["text"])
             logger.debug(f"Escaped text: [{escaped_text}]")
             # replace MAGIC_BREAK_STRING with a break tag for section/paragraph break
             escaped_text = escaped_text.replace(
@@ -110,7 +111,12 @@ class AzureTTSProvider(BaseTTSProvider):
             logger.info(
                 f"Processing chapter-{audio_tags.idx} <{audio_tags.title}>, chunk {i} of {len(text_chunks)}"
             )
-            ssml = f"<speak version='1.0' xmlns='http://www.w3.org/2001/10/synthesis' xml:lang='{self.config.language}'><voice name='{self.config.voice_name}'>{escaped_text}</voice></speak>"
+            if chunk["tag"] == "narration":
+                ssml = f"<speak version='1.0' xmlns='http://www.w3.org/2001/10/synthesis' xml:lang='{self.config.language}'><voice name='{self.config.voice_name}'>{escaped_text}</voice></speak>"
+            elif chunk["tag"] == "dialogue":
+                # add break time before dialogue
+                escaped_text = f"<break time='450ms'/> {escaped_text} <break time='450ms'/> "
+                ssml = f"<speak version='1.0' xmlns='http://www.w3.org/2001/10/synthesis' xml:lang='{self.config.language}'><voice name='{self.config.dialogue_voice_name}'>{escaped_text}</voice></speak>"
             logger.debug(f"SSML: [{ssml}]")
 
             for retry in range(MAX_RETRIES):

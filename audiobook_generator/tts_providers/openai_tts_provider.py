@@ -30,6 +30,7 @@ class OpenAITTSProvider(BaseTTSProvider):
         logger.setLevel(config.log)
         config.model_name = config.model_name or "tts-1"
         config.voice_name = config.voice_name or "alloy"
+        config.dialogue_voice_name = config.dialogue_voice_name or "echo"
         config.output_format = config.output_format or "mp3"
 
         # per 1000 characters (0.03$ for HD model, 0.015$ for standard model)

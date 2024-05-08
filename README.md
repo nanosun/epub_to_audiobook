@@ -85,7 +85,7 @@ usage: main.py [-h] [--tts {azure,openai,edge}]
                [--no_prompt] [--language LANGUAGE]
                [--newline_mode {single,double}]
                [--chapter_start CHAPTER_START] [--chapter_end CHAPTER_END]
-               [--output_text] [--remove_endnotes] [--voice_name VOICE_NAME]
+               [--output_text] [--remove_endnotes] [--voice_name VOICE_NAME] [--dialogue_voice_name DIALOGUE_VOICE_NAME] 
                [--output_format OUTPUT_FORMAT] [--model_name MODEL_NAME]
                [--voice_rate VOICE_RATE] [--voice_volume VOICE_VOLUME]
                [--voice_pitch VOICE_PITCH] [--proxy PROXY]
@@ -145,6 +145,9 @@ options:
                         middle of sentences. This is useful for academic
                         books.
   --voice_name VOICE_NAME
+                        Various TTS providers has different voice names, look
+                        up for your provider settings.
+  --dialogue_voice_name DIALOGUE_VOICE_NAME
                         Various TTS providers has different voice names, look
                         up for your provider settings.
   --output_format OUTPUT_FORMAT

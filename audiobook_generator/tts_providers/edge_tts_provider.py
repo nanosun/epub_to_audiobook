@@ -115,6 +115,7 @@ class EdgeTTSProvider(BaseTTSProvider):
         logger.setLevel(config.log)
         # TTS provider specific config
         config.voice_name = config.voice_name or "en-US-GuyNeural"
+        config.dialogue_voice_name = config.dialogue_voice_name or "en-US-AriaNeural"
         config.output_format = config.output_format or "audio-24khz-48kbitrate-mono-mp3"
         config.voice_rate = config.voice_rate or "+0%"
         config.voice_volume = config.voice_volume or "+0%"
