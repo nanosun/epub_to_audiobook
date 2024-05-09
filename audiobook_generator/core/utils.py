@@ -4,7 +4,7 @@ from mutagen.id3._frames import TIT2, TPE1, TALB, TRCK
 from mutagen.id3 import ID3, ID3NoHeaderError
 
 logger = logging.getLogger(__name__)
-QUOTATIONS = ["\"", "“", "”", "„", "‟", "«", "»", "「", "」"]
+QUOTATIONS = ["\"", "“", "”", "„", "‟", "«", "»", "「", "」", "『", "』", "‘", "’"]
 
 def split_text(text: str, max_chars: int, language: str) -> list[dict]:
     chunks = []
